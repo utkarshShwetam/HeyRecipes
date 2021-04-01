@@ -26,4 +26,10 @@ public class RecipeRepository {
     public LiveData<List<RecipeModal>> getRecipes(){
         return recipeAPIClient.getRecipes();
     }
+
+    public void searchRecipeAPI(String query,int pagNumber){
+        if(pagNumber==0)
+            pagNumber=1;
+        recipeAPIClient.searchRecipesApi(query,pagNumber);
+    }
 }
