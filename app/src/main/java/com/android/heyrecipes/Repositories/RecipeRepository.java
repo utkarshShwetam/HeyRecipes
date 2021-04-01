@@ -14,22 +14,22 @@ public class RecipeRepository {
     private static RecipeAPIClient recipeAPIClient;
 
     private RecipeRepository() {
-        recipeAPIClient= RecipeAPIClient.getInstance();
+        recipeAPIClient = RecipeAPIClient.getInstance();
     }
 
-    public static RecipeRepository getInstance(){
-        if(instance==null)
-            instance=new RecipeRepository();
+    public static RecipeRepository getInstance() {
+        if (instance == null)
+            instance = new RecipeRepository();
         return instance;
     }
 
-    public LiveData<List<RecipeModal>> getRecipes(){
+    public LiveData<List<RecipeModal>> getRecipes() {
         return recipeAPIClient.getRecipes();
     }
 
-    public void searchRecipeAPI(String query,int pagNumber){
-        if(pagNumber==0)
-            pagNumber=1;
-        recipeAPIClient.searchRecipesApi(query,pagNumber);
+    public void searchRecipeAPI(String query, int pagNumber) {
+        if (pagNumber == 0)
+            pagNumber = 1;
+        recipeAPIClient.searchRecipesApi(query, pagNumber);
     }
 }

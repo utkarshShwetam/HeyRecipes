@@ -19,6 +19,7 @@ public class RecipeSearchResponse {
     public int getCount() {
         return count;
     }
+
     public List<RecipeModal> getRecipes() {
         return recipes;
     }

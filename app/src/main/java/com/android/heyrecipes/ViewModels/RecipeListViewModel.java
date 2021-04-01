@@ -10,18 +10,19 @@ import java.util.List;
 
 public class RecipeListViewModel extends ViewModel {
     private RecipeRepository recipeRepository;
+
     public RecipeListViewModel() {
-        recipeRepository=RecipeRepository.getInstance();
+        recipeRepository = RecipeRepository.getInstance();
     }
 
-    public LiveData<List<RecipeModal>> getRecipes(){
+    public LiveData<List<RecipeModal>> getRecipes() {
         return recipeRepository.getRecipes();
     }
 
-    public void searchRecipeAPI(String query,int pagNumber){
-        if(pagNumber==0)
-            pagNumber=1;
-        recipeRepository.searchRecipeAPI(query,pagNumber);
+    public void searchRecipeAPI(String query, int pagNumber) {
+        if (pagNumber == 0)
+            pagNumber = 1;
+        recipeRepository.searchRecipeAPI(query, pagNumber);
     }
 
 

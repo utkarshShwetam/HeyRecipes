@@ -9,7 +9,7 @@ public class RecipeModal implements Parcelable {
 
     private String title;
     private String publisher;
-    private String [] ingredients;
+    private String[] ingredients;
     private String recipe_id;
     private String image_url;
     private float social_rank;

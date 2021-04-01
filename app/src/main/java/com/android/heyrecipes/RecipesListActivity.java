@@ -7,19 +7,10 @@ import android.view.View;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.android.heyrecipes.APIRequests.APIResponse.RecipeResponse;
-import com.android.heyrecipes.APIRequests.APIResponse.RecipeSearchResponse;
-import com.android.heyrecipes.APIRequests.RecipeAPI;
-import com.android.heyrecipes.APIRequests.RetrofitServiceGenerator;
 import com.android.heyrecipes.DataModals.RecipeModal;
 import com.android.heyrecipes.ViewModels.RecipeListViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RecipesListActivity extends BaseActivity {
     //View Model
@@ -29,7 +20,7 @@ public class RecipesListActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes_list);
-        recipeListViewModel= new ViewModelProvider(this).get(RecipeListViewModel.class);
+        recipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
         subscribeObserver();
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,25 +32,25 @@ public class RecipesListActivity extends BaseActivity {
     }
 
     //****************************************Observer********************************************
-    private void subscribeObserver(){
+    private void subscribeObserver() {
         recipeListViewModel.getRecipes().observe(this, new Observer<List<RecipeModal>>() {
             @Override
             public void onChanged(List<RecipeModal> recipeModals) {
-                if(recipeModals!=null) {
+                if (recipeModals != null) {
                     for (RecipeModal recipe : recipeModals) {
-                        Log.e("RESPONSE", "onChanged: " + recipe.getTitle());
+                        Log.e("RESPONSE", "In Activity: " + recipe.getTitle());
                     }
                 }
             }
         });
     }
 
-    private  void searchRecipeApi(String query,int pageNumber){
-        recipeListViewModel.searchRecipeAPI(query,pageNumber);
+    private void searchRecipeApi(String query, int pageNumber) {
+        recipeListViewModel.searchRecipeAPI(query, pageNumber);
     }
 
     //*********************************************retrofit calls*************************************
-    private void testRetro(){
-        searchRecipeApi("Chicken breast",1);
+    private void testRetro() {
+        searchRecipeApi("Pasta", 1);
     }
 }

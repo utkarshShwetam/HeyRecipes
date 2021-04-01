@@ -12,13 +12,13 @@ public interface RecipeAPI {
     //Search the API for a query
     @GET("api/search")
     Call<RecipeSearchResponse> searchRecipe(
-      @Query("q") String query,
-      @Query("page") String page
+            @Query("q") String query,
+            @Query("page") String page
     );
 
     //Get recipe request
     @GET("api/get")
     Call<RecipeResponse> getRecipe(
-      @Query("rId") String recipe_id
+            @Query("rId") String recipe_id
     );
 }

@@ -11,7 +11,7 @@ public class RecipeResponse {
     @Expose()
     private RecipeModal recipe;
 
-    public RecipeModal getRecipe(){
+    public RecipeModal getRecipe() {
         return recipe;
     }
 

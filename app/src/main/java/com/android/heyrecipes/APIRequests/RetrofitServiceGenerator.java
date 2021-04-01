@@ -9,14 +9,14 @@ public class RetrofitServiceGenerator {
 
     private static Retrofit.Builder retroFitBuilder =
             new Retrofit.Builder()
-            .baseUrl(ConstantsValues.API_URL)
-            .addConverterFactory(GsonConverterFactory.create());
+                    .baseUrl(ConstantsValues.API_URL)
+                    .addConverterFactory(GsonConverterFactory.create());
 
-    private static Retrofit retrofit= retroFitBuilder.build();
+    private static Retrofit retrofit = retroFitBuilder.build();
 
-    private static RecipeAPI recipeAPI=retrofit.create(RecipeAPI.class);
+    private static RecipeAPI recipeAPI = retrofit.create(RecipeAPI.class);
 
-    public static RecipeAPI getRecipeAPI(){
+    public static RecipeAPI getRecipeAPI() {
         return recipeAPI;
     }
 }

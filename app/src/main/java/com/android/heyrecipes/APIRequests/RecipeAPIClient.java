@@ -90,6 +90,7 @@ public class RecipeAPIClient {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e("ERROR", "run: " + e.getMessage());
                 recipesData.postValue(null);
             }
 
