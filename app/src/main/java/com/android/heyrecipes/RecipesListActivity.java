@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.android.heyrecipes.APIRequests.APIResponse.RecipeResponse;
 import com.android.heyrecipes.APIRequests.APIResponse.RecipeSearchResponse;
 import com.android.heyrecipes.APIRequests.RecipeAPI;
 import com.android.heyrecipes.APIRequests.RetrofitServiceGenerator;
 import com.android.heyrecipes.DataModals.RecipeModal;
-import com.google.android.material.button.MaterialButton;
+import com.android.heyrecipes.ViewModels.RecipeListViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,24 +22,29 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RecipesListActivity extends BaseActivity {
-    MaterialButton button;
+    //View Model
+    private RecipeListViewModel recipeListViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes_list);
-        button=findViewById(R.id.test);
-
-
-    }
-    public void check(View view){
+        recipeListViewModel= new ViewModelProvider(this).get(RecipeListViewModel.class);
+        subscribeObserver();
         testRetro();
-        /*Log.e("Button", "check: Clicked");
-        if(progressIndicator.getVisibility() == View.VISIBLE)
-            showProgressBar(false);
-        else
-            showProgressBar(true);*/
     }
 
+    //****************************************Observer********************************************
+    private void subscribeObserver(){
+        recipeListViewModel.getRecipes().observe(this, new Observer<List<RecipeModal>>() {
+            @Override
+            public void onChanged(List<RecipeModal> recipeModals) {
+
+            }
+        });
+    }
+
+    //*********************************************retrofit calls*************************************
     private void testRetro(){
         //***************GET query result******************
         Log.e("Called", "testRetro: Called Retro" );
