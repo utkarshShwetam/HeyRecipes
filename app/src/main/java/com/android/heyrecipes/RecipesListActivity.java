@@ -1,9 +1,11 @@
 package com.android.heyrecipes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,6 +33,15 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
         recyclerView = findViewById(R.id.recipe_recycler_list);
         searchView = findViewById(R.id.search_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (recyclerView.canScrollVertically(1)) {
+                    //search the next page
+                    recipeListViewModel.searchNextQuery();
+                }
+            }
+        });
         recipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
         initRecyclerView();
         subscribeObserver();
@@ -93,7 +104,7 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
 
     @Override
     public void onRecipeClick(int position) {
-
+        startActivity(new Intent(this, RecipeActivity.class).putExtra("recipe", recipeRecyclerAdapter.getSelectedRecipe(position)));
     }
 
     @Override

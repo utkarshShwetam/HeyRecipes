@@ -29,6 +29,11 @@ public class RecipeListViewModel extends ViewModel {
         recipeRepository.searchRecipeAPI(query, pagNumber);
     }
 
+    public void searchNextQuery(){
+        if(!isPerformingQueryCheck && isViewingRecipesCheck){
+            recipeRepository.searchNextPage();
+        }
+    }
     public boolean isViewingRecipesCheck() {
         return isViewingRecipesCheck;
     }

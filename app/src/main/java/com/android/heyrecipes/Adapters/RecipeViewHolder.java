@@ -1,5 +1,6 @@
 package com.android.heyrecipes.Adapters;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -31,5 +32,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.On
     @Override
     public void onClick(View v) {
         onRecipeListener.onRecipeClick(getAdapterPosition());
+        Log.e("CAT CLICK", "onClick: clicked");
     }
 }

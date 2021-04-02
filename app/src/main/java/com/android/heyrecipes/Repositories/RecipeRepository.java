@@ -12,6 +12,8 @@ public class RecipeRepository {
 
     private static RecipeRepository instance;
     private static RecipeAPIClient recipeAPIClient;
+    private String nextQuery;
+    private int nextPageNumber;
 
     private RecipeRepository() {
         recipeAPIClient = RecipeAPIClient.getInstance();
@@ -27,10 +29,24 @@ public class RecipeRepository {
         return recipeAPIClient.getRecipes();
     }
 
+    public LiveData<RecipeModal> getRecipe() {
+        return recipeAPIClient.getRecipe();
+    }
+
+    public void setRecipeByID(String recipe_id){
+      recipeAPIClient.searchRecipeByID(recipe_id);
+    }
+
     public void searchRecipeAPI(String query, int pagNumber) {
         if (pagNumber == 0)
             pagNumber = 1;
+        nextQuery=query;
+        nextPageNumber=pagNumber;
         recipeAPIClient.searchRecipesApi(query, pagNumber);
+    }
+
+    public void searchNextPage(){
+            searchRecipeAPI(nextQuery,nextPageNumber+1);
     }
 
     public void cancelRequest(){
