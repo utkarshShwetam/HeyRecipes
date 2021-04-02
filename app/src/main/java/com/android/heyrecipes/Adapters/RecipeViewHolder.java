@@ -27,6 +27,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.On
 
     @Override
     public void onClick(View v) {
-        //OnRecipeListener.onRecipeClick(getAdapterPosition());
+       // OnRecipeListener.onRecipeClick(getAdapterPosition());
     }
 }

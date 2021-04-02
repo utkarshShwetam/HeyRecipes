@@ -1,6 +1,7 @@
 package com.android.heyrecipes;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -41,7 +42,13 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                recipeListViewModel.searchRecipeAPI(query, 1);
+                recipeRecyclerAdapter.displayLoading();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        recipeListViewModel.searchRecipeAPI(query, 1);
+                    }
+                },2000);
                 return false;
             }
 
