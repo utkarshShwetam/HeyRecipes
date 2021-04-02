@@ -1,6 +1,7 @@
 package com.android.heyrecipes.Adapters;
 
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -12,7 +13,7 @@ import com.google.android.material.textview.MaterialTextView;
 
 public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     MaterialTextView title,publisher,socialScore;
-    AppCompatImageView image;
+    ImageView image;
     OnRecipeListener onRecipeListener;
     public RecipeViewHolder(@NonNull View itemView,OnRecipeListener onRecipeListener) {
         super(itemView);
@@ -26,6 +27,6 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.On
 
     @Override
     public void onClick(View v) {
-        OnRecipeListener.onRecipeClick(getAdapterPosition());
+        //OnRecipeListener.onRecipeClick(getAdapterPosition());
     }
 }

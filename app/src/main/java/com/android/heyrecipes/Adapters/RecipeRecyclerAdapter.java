@@ -37,7 +37,8 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         Glide.with(holder.itemView.getContext())
                 .setDefaultRequestOptions(requestOptions)
-                .load(recipeModalList.get(position))
+                .load(recipeModalList.get(position).getImage_url())
+                .centerCrop()
                 .into(((RecipeViewHolder)holder).image);
 
         ((RecipeViewHolder)holder).title.setText(recipeModalList.get(position).getTitle());

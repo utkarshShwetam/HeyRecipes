@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.heyrecipes.Adapters.OnClickInterface.OnRecipeListener;
@@ -19,6 +21,7 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
     //View Model
     private RecipeListViewModel recipeListViewModel;
     private RecipeRecyclerAdapter recipeRecyclerAdapter;
+    private SearchView searchView;
     private RecyclerView recyclerView;
 
     @Override
@@ -26,10 +29,27 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes_list);
         recyclerView=findViewById(R.id.recipe_recycler_list);
+        searchView=findViewById(R.id.search_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
         initRecyclerView();
         subscribeObserver();
-        testRetro();
+        initSearchView();
+    }
+
+    private void initSearchView(){
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                recipeListViewModel.searchRecipeAPI(query, 1);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     private void initRecyclerView(){
@@ -52,14 +72,7 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
         });
     }
 
-    private void searchRecipeApi(String query, int pageNumber) {
-        recipeListViewModel.searchRecipeAPI(query, pageNumber);
-    }
-
     //*********************************************retrofit calls*************************************
-    private void testRetro() {
-        searchRecipeApi("Pasta", 1);
-    }
 
     @Override
     public void onRecipeClick(int position) {
