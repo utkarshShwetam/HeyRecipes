@@ -31,6 +31,7 @@ android {
 dependencies {
     def retrofitVersion="2.9.0"
     def lifecycle_version = "2.3.1"
+    def cardVersion= "1.0.0"
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
@@ -45,4 +46,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:${lifecycle_version}"
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata:${lifecycle_version}"
+    //Card View
+    implementation "androidx.cardview:cardview:${cardVersion}"
+
 }
