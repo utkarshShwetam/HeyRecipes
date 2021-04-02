@@ -3,7 +3,6 @@ package com.android.heyrecipes;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
@@ -29,16 +28,20 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes_list);
-        recyclerView=findViewById(R.id.recipe_recycler_list);
-        searchView=findViewById(R.id.search_view);
+        recyclerView = findViewById(R.id.recipe_recycler_list);
+        searchView = findViewById(R.id.search_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
         initRecyclerView();
         subscribeObserver();
         initSearchView();
+        if (!recipeListViewModel.isViewingRecipesCheck()) {
+            //display search category
+            displaySearchCategories();
+        }
     }
 
-    private void initSearchView(){
+    private void initSearchView() {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -47,8 +50,10 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
                     @Override
                     public void run() {
                         recipeListViewModel.searchRecipeAPI(query, 1);
+
                     }
-                },2000);
+                }, 1000);
+                searchView.clearFocus();
                 return false;
             }
 
@@ -59,8 +64,8 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
         });
     }
 
-    private void initRecyclerView(){
-        recipeRecyclerAdapter= new RecipeRecyclerAdapter(this);
+    private void initRecyclerView() {
+        recipeRecyclerAdapter = new RecipeRecyclerAdapter(this);
         recyclerView.setAdapter(recipeRecyclerAdapter);
     }
 
@@ -70,16 +75,21 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
             @Override
             public void onChanged(List<RecipeModal> recipeModals) {
                 if (recipeModals != null) {
-                    for (RecipeModal recipe : recipeModals) {
-                        Log.e("RESPONSE", "In Activity: " + recipe.getTitle());
-                    }
+                    if (recipeListViewModel.isViewingRecipesCheck())
+                        for (RecipeModal recipe : recipeModals) {
+                            Log.e("RESPONSE", "In Activity: " + recipe.getTitle());
+                            recipeListViewModel.setPerformingQueryCheck(false);
+                        }
                     recipeRecyclerAdapter.setRecipe(recipeModals);
                 }
             }
         });
     }
 
-    //*********************************************retrofit calls*************************************
+    private void displaySearchCategories() {
+        recipeListViewModel.setViewingRecipesCheck(false);
+        recipeRecyclerAdapter.displaySearchCategory();
+    }
 
     @Override
     public void onRecipeClick(int position) {
@@ -88,6 +98,18 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
 
     @Override
     public void onCategoryClick(String category) {
+        recipeRecyclerAdapter.displayLoading();
+        recipeListViewModel.searchRecipeAPI(category, 1);
+        searchView.clearFocus();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (recipeListViewModel.OnBackPressed()) {
+            super.onBackPressed();
+        } else {
+            displaySearchCategories();
+        }
 
     }
 }

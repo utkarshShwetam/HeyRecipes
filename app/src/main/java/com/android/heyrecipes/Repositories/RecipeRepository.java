@@ -32,4 +32,8 @@ public class RecipeRepository {
             pagNumber = 1;
         recipeAPIClient.searchRecipesApi(query, pagNumber);
     }
+
+    public void cancelRequest(){
+        recipeAPIClient.cancelRequest();
+    }
 }

@@ -109,4 +109,9 @@ public class RecipeAPIClient {
         }
     }
 
+    public void cancelRequest() {
+        if (retrieveRecipesRunnable != null) {
+            retrieveRecipesRunnable.cancelRequest();
+        }
+    }
 }

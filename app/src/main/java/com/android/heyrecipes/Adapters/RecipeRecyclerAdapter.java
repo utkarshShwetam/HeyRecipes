@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.heyrecipes.Adapters.OnClickInterface.OnRecipeListener;
+import com.android.heyrecipes.Constants.ConstantsValues;
 import com.android.heyrecipes.DataModals.RecipeModal;
 import com.android.heyrecipes.R;
 import com.bumptech.glide.Glide;
@@ -19,6 +20,7 @@ import java.util.List;
 public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int RECIPE_TYPE = 1;
     private static final int LOADING_TYPE = 2;
+    private static final int CATEGORY_TYPE = 3;
     private List<RecipeModal> recipeModalList;
     private final OnRecipeListener onRecipeListener;
 
@@ -39,6 +41,10 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             case LOADING_TYPE: {
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_loading_list_item, parent, false);
                 return new LoadingViewHolder(view);
+            }
+            case CATEGORY_TYPE: {
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_caterogy_list_item, parent, false);
+                return new CategoryViewHolder(view, onRecipeListener);
             }
 
             default:
@@ -64,33 +70,60 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ((RecipeViewHolder) holder).title.setText(recipeModalList.get(position).getTitle());
             ((RecipeViewHolder) holder).publisher.setText(recipeModalList.get(position).getPublisher());
             ((RecipeViewHolder) holder).socialScore.setText(String.valueOf(Math.round(recipeModalList.get(position).getSocial_rank())));
+        } else if (itemViewType == CATEGORY_TYPE) {
+            RequestOptions requestOptions = new RequestOptions()
+                    .placeholder(R.drawable.ic_launcher_background);
+
+            Glide.with(holder.itemView.getContext())
+                    .setDefaultRequestOptions(requestOptions)
+                    .load("")
+                    .centerCrop()
+                    .into(((CategoryViewHolder) holder).categoryImage);
+
+            ((CategoryViewHolder) holder).categoryTitle.setText(recipeModalList.get(position).getTitle());
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(recipeModalList.get(position).getTitle().equals("Loading")){
+        if (recipeModalList.get(position).getSocial_rank() == -1) {
+            return CATEGORY_TYPE;
+        } else if (recipeModalList.get(position).getTitle().equals("Loading")) {
             return LOADING_TYPE;
-        }else {
+        } else {
             return RECIPE_TYPE;
         }
     }
 
-    public void displayLoading(){
-    if(!isLoading()){
-        RecipeModal recipeModal=new RecipeModal();
-        recipeModal.setTitle("Loading");;
-        List<RecipeModal> loadingList=new ArrayList<>();
-        loadingList.add(recipeModal);
-        recipeModalList=loadingList;
+    public void displayLoading() {
+        if (!isLoading()) {
+            RecipeModal recipeModal = new RecipeModal();
+            recipeModal.setTitle("Loading");
+            ;
+            List<RecipeModal> loadingList = new ArrayList<>();
+            loadingList.add(recipeModal);
+            recipeModalList = loadingList;
+            notifyDataSetChanged();
+        }
+
+    }
+
+    public void displaySearchCategory() {
+        List<RecipeModal> categories = new ArrayList<>();
+        for (int i = 0; i < ConstantsValues.CATEGORIES_TYPE.length; i++) {
+            RecipeModal recipeModal = new RecipeModal();
+            recipeModal.setTitle(ConstantsValues.CATEGORIES_TYPE[i]);
+            recipeModal.setImage_url("");
+            recipeModal.setSocial_rank(-1);
+            categories.add(recipeModal);
+        }
+        recipeModalList = categories;
         notifyDataSetChanged();
     }
 
-    }
-
-    private boolean isLoading(){
-        if(recipeModalList!=null){
-            if(recipeModalList.size()>0){
+    private boolean isLoading() {
+        if (recipeModalList != null) {
+            if (recipeModalList.size() > 0) {
                 return recipeModalList.get(recipeModalList.size() - 1).getTitle().equals("Loading");
             }
         }
@@ -108,4 +141,5 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         recipeModalList = recipe;
         notifyDataSetChanged();
     }
+
 }
