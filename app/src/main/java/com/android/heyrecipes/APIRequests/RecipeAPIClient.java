@@ -29,10 +29,11 @@ public class RecipeAPIClient {
     private RetrieveRecipesRunnable retrieveRecipesRunnable;
     private RetrieveRecipeRunnable retrieveRecipeRunnable;
     private MutableLiveData<RecipeModal> recipeModalMutableLiveData;
+    private MutableLiveData<Boolean> recipeRequestTimeOut = new MutableLiveData<>();
 
     private RecipeAPIClient() {
         recipesData = new MutableLiveData<>();
-        recipeModalMutableLiveData=new MutableLiveData<>();
+        recipeModalMutableLiveData = new MutableLiveData<>();
     }
 
     public static RecipeAPIClient getInstance() {
@@ -44,23 +45,29 @@ public class RecipeAPIClient {
     public LiveData<List<RecipeModal>> getRecipes() {
         return recipesData;
     }
+
     public LiveData<RecipeModal> getRecipe() {
         return recipeModalMutableLiveData;
     }
 
-    public void searchRecipeByID(String recipe_id){
-        if(retrieveRecipeRunnable!=null)
-            retrieveRecipeRunnable=null;
-        retrieveRecipeRunnable=new RetrieveRecipeRunnable(recipe_id);
-        final Future handler=AppExecutors.getInstance().newtorkIO().submit(retrieveRecipeRunnable);
+    public LiveData<Boolean> isRecipeRequestTimedOut() {
+        return recipeRequestTimeOut;
+    }
 
+    public void searchRecipeByID(String recipe_id) {
+        if (retrieveRecipeRunnable != null)
+            retrieveRecipeRunnable = null;
+        retrieveRecipeRunnable = new RetrieveRecipeRunnable(recipe_id);
+        final Future handler = AppExecutors.getInstance().newtorkIO().submit(retrieveRecipeRunnable);
+        recipeRequestTimeOut.setValue(false);
         AppExecutors.getInstance().newtorkIO().schedule(new Runnable() {
             @Override
             public void run() {
                 //let the user know timeout
+                recipeRequestTimeOut.postValue(true);
                 handler.cancel(true);
             }
-        },ConstantsValues.TIMEOUT,TimeUnit.MILLISECONDS);
+        }, ConstantsValues.TIMEOUT, TimeUnit.MILLISECONDS);
 
     }
 

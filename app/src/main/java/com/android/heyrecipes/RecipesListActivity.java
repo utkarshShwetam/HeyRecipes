@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
@@ -17,6 +19,8 @@ import com.android.heyrecipes.Adapters.RecipeRecyclerAdapter;
 import com.android.heyrecipes.DataModals.RecipeModal;
 import com.android.heyrecipes.ViewModels.RecipeListViewModel;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class RecipesListActivity extends BaseActivity implements OnRecipeListener {
@@ -25,6 +29,7 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
     private RecipeRecyclerAdapter recipeRecyclerAdapter;
     private SearchView searchView;
     private RecyclerView recyclerView;
+    TextView exhausted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,7 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
         setContentView(R.layout.activity_recipes_list);
         recyclerView = findViewById(R.id.recipe_recycler_list);
         searchView = findViewById(R.id.search_view);
+        exhausted = findViewById(R.id.query_exhausted);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -88,11 +94,20 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
                 if (recipeModals != null) {
                     if (recipeListViewModel.isViewingRecipesCheck())
                         for (RecipeModal recipe : recipeModals) {
-                            Log.e("RESPONSE", "In Activity: " + recipe.getTitle());
+                            //Log.e("RESPONSE", "In Activity: " + recipe.getTitle());
                             recipeListViewModel.setPerformingQueryCheck(false);
                         }
                     recipeRecyclerAdapter.setRecipe(recipeModals);
                 }
+            }
+        });
+
+        recipeListViewModel.isQueryExhausted().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean)
+                    Log.e("RESPONSE", "In ActivityList: Query Exhausted ");
+                recipeRecyclerAdapter.setQueryExhausted();
             }
         });
     }

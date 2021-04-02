@@ -12,13 +12,27 @@ public class RecipeViewModal extends ViewModel {
 
     private RecipeRepository recipeRepository;
     private String recipeID;
+    private boolean didReceiveRecipe;
+
+    public boolean isDidReceiveRecipe() {
+        return didReceiveRecipe;
+    }
+
+
+    public void setDidReceiveRecipe(boolean didReceiveRecipe) {
+        this.didReceiveRecipe = didReceiveRecipe;
+    }
 
     public RecipeViewModal() {
         recipeRepository=RecipeRepository.getInstance();
+        didReceiveRecipe=false;
     }
 
     public LiveData<RecipeModal> getRecipe(){
         return recipeRepository.getRecipe();
+    }
+    public LiveData<Boolean> isRecipeRequestTimedOut(){
+        return recipeRepository.isRecipeRequestTimedOut();
     }
 
     public void searchRecipeByID(String recipe_id){

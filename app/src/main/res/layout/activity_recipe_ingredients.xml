@@ -18,7 +18,7 @@
             android:id="@+id/cardView_ingredients"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:backgroundTint="@color/light_grey"
+            android:backgroundTint="@color/teal_200"
             android:elevation="20dp"
             app:cardCornerRadius="10dp">
 
@@ -28,6 +28,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp"
+                android:background="@color/white"
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="15dp"
                 android:scaleType="centerCrop" />
@@ -38,11 +39,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/cardView_ingredients"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="@color/light_grey">
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/teal_200">
 
             <RelativeLayout
                 android:layout_width="match_parent"
