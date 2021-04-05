@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.android.heyrecipes.DataModals.RecipeModal;
 import com.android.heyrecipes.ViewModels.RecipeViewModal;
@@ -39,9 +40,9 @@ public class RecipeActivity extends BaseActivity {
         recipeIngredientContainer = findViewById(R.id.ingredients_container);
         scrollView = findViewById(R.id.parent);
 
-        recipeViewModal = new ViewModelProvider(this).get(RecipeViewModal.class);
+        recipeViewModal =  ViewModelProviders.of(this).get(RecipeViewModal.class);
         getIncomingIntent();
-        subscribeObserver();
+        /*subscribeObserver();*/
 
     }
 
@@ -49,11 +50,11 @@ public class RecipeActivity extends BaseActivity {
         if (getIntent().hasExtra("recipe")) {
             RecipeModal recipeModal = getIntent().getParcelableExtra("recipe");
             Log.e("Recipe Act", "getIncomingIntent: " + recipeModal.getTitle());
-            recipeViewModal.searchRecipeByID(recipeModal.getRecipe_id());
+            /*recipeViewModal.searchRecipeByID(recipeModal.getRecipe_id());*/
         }
     }
 
-    private void subscribeObserver() {
+    /*private void subscribeObserver() {
         recipeViewModal.isRecipeRequestTimedOut().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -62,9 +63,9 @@ public class RecipeActivity extends BaseActivity {
                     displayError("Error occurred.Check Network Connection");
                 }
             }
-        });
+        });*/
 
-        recipeViewModal.getRecipe().observe(this, new Observer<RecipeModal>() {
+        /*recipeViewModal.getRecipe().observe(this, new Observer<RecipeModal>() {
             @Override
             public void onChanged(RecipeModal recipeModal) {
                 if (recipeModal != null) {
@@ -72,10 +73,10 @@ public class RecipeActivity extends BaseActivity {
                         setRecipeProperties(recipeModal);
                         recipeViewModal.setDidReceiveRecipe(true);
                     }
-                    /*Log.e("Ingredients", "onChanged: " + recipeModal.getTitle());*/
-                    /*for (String ingredients : recipeModal.getIngredients()) {
+                    *//*Log.e("Ingredients", "onChanged: " + recipeModal.getTitle());*//*
+                    *//*for (String ingredients : recipeModal.getIngredients()) {
                         Log.e("Ingredients", "onChanged: " + ingredients);
-                    }*/
+                    }*//*
                 }
             }
         });
@@ -130,7 +131,7 @@ public class RecipeActivity extends BaseActivity {
 
         }
         showParent();
-    }
+    }*/
 
     private void showParent() {
         scrollView.setVisibility(View.VISIBLE);

@@ -1,5 +1,9 @@
 package com.android.heyrecipes.ViewModels;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,10 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.heyrecipes.DataModals.RecipeModal;
 import com.android.heyrecipes.Repositories.RecipeRepository;
 
-public class RecipeViewModal extends ViewModel {
+public class RecipeViewModal extends AndroidViewModel {
+    public RecipeViewModal(@NonNull Application application) {
+        super(application);
+    }
 
 
-    private RecipeRepository recipeRepository;
+    /*private RecipeRepository recipeRepository;
     private String recipeID;
     private boolean didReceiveRecipe;
 
@@ -42,6 +49,6 @@ public class RecipeViewModal extends ViewModel {
 
     public String getRecipeID() {
         return recipeID;
-    }
+    }*/
 
 }

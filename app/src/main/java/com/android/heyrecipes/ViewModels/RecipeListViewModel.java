@@ -1,6 +1,11 @@
 package com.android.heyrecipes.ViewModels;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.android.heyrecipes.DataModals.RecipeModal;
@@ -8,8 +13,28 @@ import com.android.heyrecipes.Repositories.RecipeRepository;
 
 import java.util.List;
 
-public class RecipeListViewModel extends ViewModel {
-    private RecipeRepository recipeRepository;
+public class RecipeListViewModel extends AndroidViewModel {
+    public enum ViewState {CATEGORIES,RECIPES};
+
+    private MutableLiveData<ViewState> viewState;
+    public RecipeListViewModel(@NonNull Application application) {
+        super(application);
+        init();
+    }
+
+
+    private void init(){
+        if(viewState==null) {
+            viewState = new MutableLiveData<>();
+            viewState.setValue(ViewState.CATEGORIES);
+        }
+    }
+
+    public LiveData<ViewState> getViewState(){
+        return viewState;
+    }
+
+    /*private RecipeRepository recipeRepository;
     private boolean isViewingRecipesCheck;
     private boolean isPerformingQueryCheck;
 
@@ -67,5 +92,5 @@ public class RecipeListViewModel extends ViewModel {
 
     public void setPerformingQueryCheck(boolean performingQueryCheck) {
         isPerformingQueryCheck = performingQueryCheck;
-    }
+    }*/
 }
