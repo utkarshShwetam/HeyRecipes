@@ -3,28 +3,52 @@ package com.android.heyrecipes.DataModals;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.util.Arrays;
 
+@Entity(tableName = "recipes")
 public class RecipeModal implements Parcelable {
 
+    @ColumnInfo(name = "title")
     private String title;
+
+    @ColumnInfo(name = "publisher")
     private String publisher;
-    private String[] ingredients;
+
+    @ColumnInfo(name = "ingredients")
+    private String [] ingredients;
+
+    @PrimaryKey
+    @NonNull
     private String recipe_id;
+
+    @ColumnInfo(name = "image_url")
     private String image_url;
+
+    @ColumnInfo(name = "social_rank")
     private float social_rank;
 
+    @ColumnInfo(name = "timestamp")
+    private int timestamp;
+
+    @Ignore
     public RecipeModal() {
 
     }
 
-    public RecipeModal(String title, String publisher, String[] ingredients, String recipe_id, String image_url, float social_rank) {
+    public RecipeModal(String title, String publisher, String[] ingredients, String recipe_id, String image_url, float social_rank,int timestamp) {
         this.title = title;
         this.publisher = publisher;
         this.ingredients = ingredients;
         this.recipe_id = recipe_id;
         this.image_url = image_url;
         this.social_rank = social_rank;
+        this.timestamp=timestamp;
     }
 
     protected RecipeModal(Parcel in) {
@@ -34,6 +58,7 @@ public class RecipeModal implements Parcelable {
         recipe_id = in.readString();
         image_url = in.readString();
         social_rank = in.readFloat();
+        timestamp=in.readInt();
     }
 
     public static final Creator<RecipeModal> CREATOR = new Creator<RecipeModal>() {
@@ -47,6 +72,14 @@ public class RecipeModal implements Parcelable {
             return new RecipeModal[size];
         }
     };
+
+    public int getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getTitle() {
         return title;
@@ -97,7 +130,7 @@ public class RecipeModal implements Parcelable {
     }
 
     @Override
-    public String toString() {
+    public String  toString() {
         return "RecipeModal{" +
                 "title='" + title + '\'' +
                 ", publisher='" + publisher + '\'' +
@@ -105,6 +138,7 @@ public class RecipeModal implements Parcelable {
                 ", recipe_id='" + recipe_id + '\'' +
                 ", image_url='" + image_url + '\'' +
                 ", social_rank=" + social_rank +
+                ", timestamp=" + timestamp +
                 '}';
     }
 
@@ -121,5 +155,6 @@ public class RecipeModal implements Parcelable {
         dest.writeString(recipe_id);
         dest.writeString(image_url);
         dest.writeFloat(social_rank);
+        dest.writeInt(timestamp);
     }
 }

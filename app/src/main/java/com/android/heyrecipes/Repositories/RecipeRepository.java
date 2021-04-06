@@ -1,93 +1,93 @@
 package com.android.heyrecipes.Repositories;
 
+import android.content.Context;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.android.heyrecipes.APIRequests.APIResponse.APIResponse;
+import com.android.heyrecipes.APIRequests.APIResponse.RecipeSearchResponse;
 import com.android.heyrecipes.APIRequests.RecipeAPIClient;
+import com.android.heyrecipes.APIRequests.RestCallExecutors.AppExecutors;
+import com.android.heyrecipes.APIRequests.RetrofitServiceGenerator;
+import com.android.heyrecipes.Constants.Utils.NetworkBoundResource;
+import com.android.heyrecipes.Constants.Utils.Resource;
 import com.android.heyrecipes.DataModals.RecipeModal;
+import com.android.heyrecipes.RoomPersistence.RecipeDAO;
+import com.android.heyrecipes.RoomPersistence.RecipeDatabase;
 
 import java.util.List;
 
 public class RecipeRepository {
+    private static final String TAG = "RecipeRepository";
 
     private static RecipeRepository instance;
-    private static RecipeAPIClient recipeAPIClient;
-    private String nextQuery;
-    private int nextPageNumber;
-    private MutableLiveData<Boolean> isQueryExhausted = new MutableLiveData<>();
-    private MediatorLiveData<List<RecipeModal>> mediatorLiveData = new MediatorLiveData<>();
+    private final RecipeDAO recipeDAO;
 
-    private RecipeRepository() {
-        recipeAPIClient = RecipeAPIClient.getInstance();
-        initMediator();
-    }
-
-    public static RecipeRepository getInstance() {
-        if (instance == null)
-            instance = new RecipeRepository();
+    public static RecipeRepository getInstance(Context context) {
+        if(instance==null){
+            instance=new RecipeRepository(context);
+        }
         return instance;
     }
 
-    public LiveData<List<RecipeModal>> getRecipes() {
-        return mediatorLiveData;
+    public RecipeRepository(Context context){
+        recipeDAO= RecipeDatabase.getInstance(context).getRecipeDAO();
     }
 
-    public LiveData<RecipeModal> getRecipe() {
-        return recipeAPIClient.getRecipe();
-    }
+    public LiveData<Resource<List<RecipeModal>>> searchRecipeAPI(final String query,final int pageNumber){
+        return new NetworkBoundResource<List<RecipeModal>, RecipeSearchResponse>(AppExecutors.getInstance()){
 
-    private void initMediator() {
-        LiveData<List<RecipeModal>> recipeAPISource = recipeAPIClient.getRecipes();
-        mediatorLiveData.addSource(recipeAPISource, new Observer<List<RecipeModal>>() {
             @Override
-            public void onChanged(List<RecipeModal> recipeModals) {
-                if (recipeModals != null) {
-                    mediatorLiveData.setValue(recipeModals);
-                    doneQuery(recipeModals);
-                } else {
-                    //search database cache
-                    doneQuery(null);
+            protected void saveCallResult(@NonNull RecipeSearchResponse item) {
+                if(item.getRecipes()!=null){
+
+                    RecipeModal [] recipes =new RecipeModal[item.getRecipes().size()];
+
+                    int index=0;
+                    for (long rabid:recipeDAO.insertRecipes((RecipeModal[]) (item.getRecipes().toArray(recipes)))){
+                        if(rabid==-1){
+                            Log.e(TAG, "saveCallResult: CONFLICT this recipe is already inserted in the cache");
+                            //if the recipe already exists don't set the ingredients or timestamp bcz
+                            // they will be erased
+                            recipeDAO.updateRecipe(
+                                    recipes[index].getRecipe_id(),
+                                    recipes[index].getTitle(),
+                                    recipes[index].getPublisher(),
+                                    recipes[index].getImage_url(),
+                                    recipes[index].getSocial_rank()
+                            );
+                        }
+                        index++;
+                    }
                 }
             }
-        });
-    }
 
-    public void doneQuery(List<RecipeModal> list) {
-        if (list != null) {
-            if (list.size() % 30 != 0) {
-                isQueryExhausted.setValue(true);
+            @Override
+            protected boolean shouldFetch(@Nullable List<RecipeModal> data) {
+                return true;
             }
-        }
-    }
 
-    public LiveData<Boolean> isQueryExhausted() {
-        return isQueryExhausted;
-    }
+            @NonNull
+            @Override
+            protected LiveData<List<RecipeModal>> loadFromDb() {
+                return recipeDAO.searchRecipes(query,pageNumber);
+            }
 
-    public LiveData<Boolean> isRecipeRequestTimedOut() {
-        return recipeAPIClient.isRecipeRequestTimedOut();
-    }
-
-    public void setRecipeByID(String recipe_id) {
-        recipeAPIClient.searchRecipeByID(recipe_id);
-    }
-
-    public void searchRecipeAPI(String query, int pagNumber) {
-        if (pagNumber == 0)
-            pagNumber = 1;
-        nextQuery = query;
-        nextPageNumber = pagNumber;
-        isQueryExhausted.setValue(false);
-        recipeAPIClient.searchRecipesApi(query, pagNumber);
-    }
-
-    public void searchNextPage() {
-        searchRecipeAPI(nextQuery, nextPageNumber + 1);
-    }
-
-    public void cancelRequest() {
-        recipeAPIClient.cancelRequest();
+            @NonNull
+            @Override
+            protected LiveData<APIResponse<RecipeSearchResponse>> createCall() {
+                Log.e(TAG, "createCall: "+ RetrofitServiceGenerator.getRecipeAPI().searchRecipe(
+                        query, String.valueOf(pageNumber)));
+                return RetrofitServiceGenerator.getRecipeAPI().searchRecipe(
+                        query, String.valueOf(pageNumber)
+                );
+            }
+        }.getAsLiveData();
     }
 }

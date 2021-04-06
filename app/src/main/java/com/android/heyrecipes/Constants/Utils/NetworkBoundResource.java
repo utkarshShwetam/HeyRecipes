@@ -33,7 +33,7 @@ public abstract class NetworkBoundResource<CacheObject, RequestObject> {
     //Observing local db and if <condition/> query the local db, stop observing the local db
     private void init() {
         //update liveData for loading status
-        results.setValue(Resource.loading(null));
+        results.setValue((Resource<CacheObject>) Resource.loading(null));
 
         //observe liveData from source from local db
         final LiveData<CacheObject> dbSource = loadFromDb();
@@ -50,7 +50,7 @@ public abstract class NetworkBoundResource<CacheObject, RequestObject> {
                     results.addSource(dbSource, new Observer<CacheObject>() {
                         @Override
                         public void onChanged(CacheObject cacheObject) {
-
+                            setValue(Resource.success(cacheObject));
                         }
                     });
                 }
@@ -167,5 +167,4 @@ public abstract class NetworkBoundResource<CacheObject, RequestObject> {
         return results;
     }
 
-    ;
 }
