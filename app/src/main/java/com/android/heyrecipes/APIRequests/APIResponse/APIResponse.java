@@ -1,14 +1,13 @@
 package com.android.heyrecipes.APIRequests.APIResponse;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import retrofit2.Response;
 
 public class APIResponse<T> {
 
     public APIResponse<T> create(Throwable error) {
-        return new APIErrorResponse<>(!Objects.equals(error.getMessage(), "") ? error.getMessage() : "Network Error \n Check network connection");
+        return new APIErrorResponse<>(!error.getMessage().equals("") ? error.getMessage() : "Network Error \n Check network connection");
     }
 
     public APIResponse<T> create(Response<T> response) {
