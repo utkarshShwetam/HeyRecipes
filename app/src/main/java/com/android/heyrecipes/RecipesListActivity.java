@@ -22,7 +22,9 @@ import com.android.heyrecipes.DataModals.RecipeModal;
 import com.android.heyrecipes.ViewModels.RecipeListViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
 
 import java.util.List;
 
@@ -146,9 +148,15 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
     }
 
     private void initRecyclerView() {
-        recipeRecyclerAdapter = new RecipeRecyclerAdapter(this,initGlide());
+        ViewPreloadSizeProvider<String> viewPreloadSizeProvider=new ViewPreloadSizeProvider<>();
+        recipeRecyclerAdapter=new RecipeRecyclerAdapter(this,initGlide(),viewPreloadSizeProvider);
         recyclerView.setAdapter(recipeRecyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        RecyclerViewPreloader<String> preloader=new RecyclerViewPreloader<String>(Glide.with(this),
+                recipeRecyclerAdapter,viewPreloadSizeProvider,30);
+
+        recyclerView.addOnScrollListener(preloader);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {

@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 
 import com.android.heyrecipes.Constants.Utils.Resource;
 import com.android.heyrecipes.DataModals.RecipeModal;
@@ -31,6 +30,7 @@ public class RecipeListViewModel extends AndroidViewModel {
     private boolean cancelRequest;
     private int pageNumber;
     private String query;
+    private long requestStartTime;
 
     public RecipeListViewModel(@NonNull Application application) {
         super(application);
@@ -80,10 +80,11 @@ public class RecipeListViewModel extends AndroidViewModel {
     }
 
     private void executeSearch() {
+        requestStartTime=System.currentTimeMillis();
         cancelRequest = false;
         isPerformingQuery = true;
         viewState.setValue(ViewState.RECIPES);
-        final LiveData<Resource<List<RecipeModal>>> repositorySource = recipeRepository.searchRecipeAPI(query, pageNumber);
+        final LiveData<Resource<List<RecipeModal>>> repositorySource = recipeRepository.searchRecipesAPI(query, pageNumber);
         /*Log.e(TAG, "repoSource: "+repositorySource.getValue().data);*/
         recipes.addSource(repositorySource, new Observer<Resource<List<RecipeModal>>>() {
             @Override
@@ -92,6 +93,7 @@ public class RecipeListViewModel extends AndroidViewModel {
                     if (listResource != null) {
                         recipes.setValue(listResource);
                         if (listResource.status == Resource.Status.SUCCESS) {
+                            Log.e(TAG, "onChanged:REQUEST TIME"+ (System.currentTimeMillis()-requestStartTime)/1000+"seconds");
                             isPerformingQuery = false;
                             if (listResource != null) {
                                 if (listResource.data.size() == 0)

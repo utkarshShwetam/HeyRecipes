@@ -11,10 +11,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.android.heyrecipes.APIRequests.APIResponse.APIResponse;
+import com.android.heyrecipes.APIRequests.APIResponse.RecipeResponse;
 import com.android.heyrecipes.APIRequests.APIResponse.RecipeSearchResponse;
 import com.android.heyrecipes.APIRequests.RecipeAPIClient;
 import com.android.heyrecipes.APIRequests.RestCallExecutors.AppExecutors;
 import com.android.heyrecipes.APIRequests.RetrofitServiceGenerator;
+import com.android.heyrecipes.Constants.ConstantsValues;
 import com.android.heyrecipes.Constants.Utils.NetworkBoundResource;
 import com.android.heyrecipes.Constants.Utils.Resource;
 import com.android.heyrecipes.DataModals.RecipeModal;
@@ -40,7 +42,7 @@ public class RecipeRepository {
         recipeDAO= RecipeDatabase.getInstance(context).getRecipeDAO();
     }
 
-    public LiveData<Resource<List<RecipeModal>>> searchRecipeAPI(final String query,final int pageNumber){
+    public LiveData<Resource<List<RecipeModal>>> searchRecipesAPI(final String query, final int pageNumber){
         return new NetworkBoundResource<List<RecipeModal>, RecipeSearchResponse>(AppExecutors.getInstance()){
 
             @Override
@@ -86,6 +88,48 @@ public class RecipeRepository {
                         query, String.valueOf(pageNumber)));
                 return RetrofitServiceGenerator.getRecipeAPI().searchRecipe(
                         query, String.valueOf(pageNumber)
+                );
+            }
+        }.getAsLiveData();
+    }
+
+    public LiveData<Resource<RecipeModal>> searchRecipesAPI(final String recipeId){
+        return new NetworkBoundResource<RecipeModal, RecipeResponse>(AppExecutors.getInstance()){
+
+            @Override
+            protected void saveCallResult(@NonNull RecipeResponse item) {
+                if(item.getRecipe()!=null){
+                    item.getRecipe().setTimestamp((int)(System.currentTimeMillis()/1000));
+                    recipeDAO.insertRecipe(item.getRecipe());
+                }
+            }
+
+            @Override
+            protected boolean shouldFetch(@Nullable RecipeModal data) {
+                Log.e(TAG, "shouldFetch: "+data.toString() );
+                int currentTime=(int)System.currentTimeMillis()/100;
+                Log.e(TAG, "shouldFetch: "+ currentTime );
+                int lastRefresh= data.getTimestamp();
+                Log.e(TAG, "shouldFetch: "+ lastRefresh );
+                Log.e(TAG, "shouldFetch:  "+((currentTime-lastRefresh)/60/60/12)+ " days");
+                if((currentTime)-data.getTimestamp()>= ConstantsValues.RECIPE_REFRESH_TIME){
+                    Log.e(TAG, "shouldFetch: Refreshing recipe");
+                    return true;
+                }
+                return false;
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<RecipeModal> loadFromDb() {
+                return recipeDAO.getRecipe(recipeId);
+            }
+
+            @NonNull
+            @Override
+            protected LiveData<APIResponse<RecipeResponse>> createCall() {
+                return RetrofitServiceGenerator.getRecipeAPI().getRecipe(
+                        recipeId
                 );
             }
         }.getAsLiveData();

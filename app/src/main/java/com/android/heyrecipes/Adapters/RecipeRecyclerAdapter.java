@@ -1,10 +1,12 @@
 package com.android.heyrecipes.Adapters;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.heyrecipes.Adapters.OnClickInterface.OnRecipeListener;
@@ -13,13 +15,18 @@ import com.android.heyrecipes.DataModals.RecipeModal;
 import com.android.heyrecipes.R;
 import com.android.heyrecipes.ViewModels.RecipeViewModal;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.ListPreloader;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
+        ListPreloader.PreloadModelProvider {
     private static final int RECIPE_TYPE = 1;
     private static final int LOADING_TYPE = 2;
     private static final int CATEGORY_TYPE = 3;
@@ -27,10 +34,13 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private List<RecipeModal> recipeModalList;
     private final OnRecipeListener onRecipeListener;
     private RequestManager requestManager;
+    private ViewPreloadSizeProvider<String> preloadSizeProvider;
 
-    public RecipeRecyclerAdapter(OnRecipeListener onRecipeListener,RequestManager requestManager) {
+    public RecipeRecyclerAdapter(OnRecipeListener onRecipeListener,RequestManager requestManager
+    ,ViewPreloadSizeProvider<String> viewPreloadSizeProvider) {
         this.onRecipeListener = onRecipeListener;
         this.requestManager=requestManager;
+        this.preloadSizeProvider=viewPreloadSizeProvider;
     }
 
     @NonNull
@@ -40,7 +50,7 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         switch (viewType) {
             case RECIPE_TYPE: {
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_recipe_list_item, parent, false);
-                return new RecipeViewHolder(view, onRecipeListener,requestManager);
+                return new RecipeViewHolder(view, onRecipeListener,requestManager,preloadSizeProvider);
             }
 
             case LOADING_TYPE: {
@@ -180,4 +190,19 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return null;
     }
 
+    @NonNull
+    @Override
+    public List<String> getPreloadItems(int position) {
+        String url =recipeModalList.get(position).getImage_url();
+        if(TextUtils.isEmpty(url)){
+           return Collections.emptyList();
+        }
+        return Collections.singletonList(url);
+    }
+
+    @Nullable
+    @Override
+    public RequestBuilder<?> getPreloadRequestBuilder(@NonNull Object item) {
+        return requestManager.load(item);
+    }
 }

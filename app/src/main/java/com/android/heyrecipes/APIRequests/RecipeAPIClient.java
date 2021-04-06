@@ -25,13 +25,9 @@ import retrofit2.Response;
 public class RecipeAPIClient {
 
     private static RecipeAPIClient instance;
-    private MutableLiveData<List<RecipeModal>> recipesData;
-    private MutableLiveData<RecipeModal> recipeModalMutableLiveData;
-    private MutableLiveData<Boolean> recipeRequestTimeOut = new MutableLiveData<>();
 
     private RecipeAPIClient() {
-        recipesData = new MutableLiveData<>();
-        recipeModalMutableLiveData = new MutableLiveData<>();
+
     }
 
     public static RecipeAPIClient getInstance() {
