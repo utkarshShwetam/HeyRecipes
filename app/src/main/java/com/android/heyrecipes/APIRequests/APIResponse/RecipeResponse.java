@@ -7,6 +7,8 @@ import com.android.heyrecipes.DataModals.RecipeModal;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class RecipeResponse {
 
 

@@ -18,7 +18,7 @@ public class RecipeViewModal extends AndroidViewModel {
     }
 
     public LiveData<Resource<RecipeModal>> searchRecipeAPI(String recipeId){
-        return recipeRepository.searchRecipesAPI(recipeId);
+        return recipeRepository.searchRecipeAPI(recipeId);
     }
 
 

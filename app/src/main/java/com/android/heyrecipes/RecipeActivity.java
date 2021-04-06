@@ -41,7 +41,7 @@ public class RecipeActivity extends BaseActivity {
         recipeIngredientContainer = findViewById(R.id.ingredients_container);
         scrollView = findViewById(R.id.parent);
 
-        recipeViewModal =  ViewModelProviders.of(this).get(RecipeViewModal.class);
+        recipeViewModal = ViewModelProviders.of(this).get(RecipeViewModal.class);
         getIncomingIntent();
 
     }
@@ -54,25 +54,27 @@ public class RecipeActivity extends BaseActivity {
         }
     }
 
-    private void subscribeObservers(final String recipeId){
+    private void subscribeObservers(final String recipeId) {
         recipeViewModal.searchRecipeAPI(recipeId).observe(this, new Observer<Resource<RecipeModal>>() {
             @Override
             public void onChanged(Resource<RecipeModal> recipeModalResource) {
-                if(recipeModalResource!=null){
-                    if (recipeModalResource.data!=null){
-                        switch(recipeModalResource.status){
-                            case LOADING:{
+                if (recipeModalResource != null) {
+                    if (recipeModalResource.data != null) {
+                        switch (recipeModalResource.status) {
+                            case LOADING: {
                                 shimmerFrameLayout.startShimmer();
                                 break;
                             }
-                            case ERROR:{
+                            case ERROR: {
                                 showParent();
                                 shimmerFrameLayout.stopShimmer();
+                                setRecipeProperties(recipeModalResource.data);
                                 break;
                             }
-                            case SUCCESS:{
+                            case SUCCESS: {
                                 showParent();
                                 shimmerFrameLayout.stopShimmer();
+                                setRecipeProperties(recipeModalResource.data);
                                 break;
                             }
                         }
@@ -80,6 +82,45 @@ public class RecipeActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void setRecipeProperties(RecipeModal recipeModal) {
+        if (recipeModal != null) {
+            RequestOptions options = new RequestOptions()
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_error);
+
+            Glide.with(this)
+                    .setDefaultRequestOptions(options)
+                    .load(recipeModal.getImage_url())
+                    .into(imageView);
+            recipeTitle.setText(recipeModal.getTitle());
+            recipeRank.setText(String.valueOf(Math.round(recipeModal.getSocial_rank())));
+            setIngredients(recipeModal);
+        }
+    }
+
+    private void setIngredients(RecipeModal recipeModal) {
+        recipeIngredientContainer.removeAllViews();
+
+        if (recipeModal.getIngredients() != null) {
+            for (String ingredients : recipeModal.getIngredients()) {
+                TextView textView = new TextView(this);
+                textView.setText(ingredients);
+                textView.setTextSize(15);
+                textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+                recipeIngredientContainer.addView(textView);
+            }
+        } else {
+            TextView textView=new TextView(this);
+            textView.setText("ERROR! CHECK NETWORK CONNECTION");
+            textView.setTextSize(15);
+            textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            recipeIngredientContainer.addView(textView);
+        }
+
     }
 
     private void showParent() {
