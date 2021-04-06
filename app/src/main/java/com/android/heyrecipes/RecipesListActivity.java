@@ -1,6 +1,7 @@
 package com.android.heyrecipes;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -172,6 +174,10 @@ public class RecipesListActivity extends BaseActivity implements OnRecipeListene
     @Override
     public void onRecipeClick(int position) {
         startActivity(new Intent(this, RecipeActivity.class).putExtra("recipe", recipeRecyclerAdapter.getSelectedRecipe(position)));
+        /*String url=recipeRecyclerAdapter.getSelectedRecipe(position).getImage_url();
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(this, Uri.parse(url));*/
     }
 
     @Override
