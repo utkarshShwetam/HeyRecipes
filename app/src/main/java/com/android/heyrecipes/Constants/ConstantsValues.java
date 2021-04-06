@@ -9,6 +9,9 @@ public class ConstantsValues {
 
     public static String API_URL = "https://recipesapi.herokuapp.com/";
 
-    public static String [] CATEGORIES_TYPE={"Breakfast","Chicken","Pasta","Noodles","Barbeque","Cake","Grilled"};
+    public static String [] CATEGORIES_TYPE={"Breakfast","Chicken","Pasta",
+            "Noodles","Barbeque","Cake","Grilled"};
 
+    public static String [] CATEGORIES_TYPE_IMAGES={"breakfast","chicken","pasta",
+            "noodles","barbeque","cake","grilled"};
 }
