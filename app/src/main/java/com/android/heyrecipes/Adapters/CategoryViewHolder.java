@@ -1,5 +1,6 @@
 package com.android.heyrecipes.Adapters;
 
+import android.net.Uri;
 import android.view.View;
 import android.widget.TextView;
 
@@ -32,9 +33,9 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder implements View.
     }
 
     public void OnBind (RecipeModal recipeModal){
+        Uri path = Uri.parse("android.resource://com.android.heyrecipes/drawable/" + recipeModal.getImage_url());
        requestManager
-                .load("")
-                .centerCrop()
+                .load(path)
                 .into(categoryImage);
        categoryTitle.setText(recipeModal.getTitle());
     }

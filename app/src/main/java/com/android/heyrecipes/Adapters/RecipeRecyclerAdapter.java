@@ -151,7 +151,7 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         for (int i = 0; i < ConstantsValues.CATEGORIES_TYPE.length; i++) {
             RecipeModal recipeModal = new RecipeModal();
             recipeModal.setTitle(ConstantsValues.CATEGORIES_TYPE[i]);
-            recipeModal.setImage_url("");
+            recipeModal.setImage_url(ConstantsValues.CATEGORIES_TYPE_IMAGES[i]);
             recipeModal.setSocial_rank(-1);
             categories.add(recipeModal);
         }
